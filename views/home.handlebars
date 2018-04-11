@@ -1,0 +1,40 @@
+
+
+<div class="mt-4 w-100 ">
+    <input type="text" class="w-100 input " id="player1" placeholder="Player1 ..">
+</div>
+<div class="mt-4 w-100 ">
+    <input type="text" class="w-100 input" id="player2" placeholder="Player2 ..">
+</div>
+<div class="mt-4 w-100 ">
+    <input type="text" class="w-100 input " id="player3" placeholder="Player3 ..">
+</div>
+<div class="mt-4 w-100 ">
+    <input type="text" class="w-100 input s" id="player4" placeholder="Player4 ..">
+</div>
+<div class="w-100 text-center">
+    <div class="btn btn-create mx-auto mt-5" id="button-create">CREATE NEW GAME</div>
+</div>
+
+
+<script>
+    $(document).ready(() => {
+        $('#button-create').click((event) => {
+            event.preventDefault();
+            $.ajax({
+                url: '/api/games',
+                method: 'post',
+                data: {
+                    player1: $('#player1').val(),
+                    player2: $('#player2').val(),
+                    player3: $('#player3').val(),
+                    player4: $('#player4').val()
+                },
+                success: (id) => {
+                    window.location.href = `/games/${id}`
+                    console.log(res);
+                }
+            })
+        })
+    })
+</script>
