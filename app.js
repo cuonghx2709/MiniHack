@@ -5,45 +5,45 @@ const
     bodyParser = require('body-parser'),
     mongoose = require('mongoose');
 
-const 
-    goalController = require('./controller/goalController')
-
 app.use(bodyParser.urlencoded({
     extended: true
 }))
+app.use(bodyParser.json({
+    extended: true
+}))
+
+
 app.engine('handlebars', handlebars({
     defaultLayout: 'main'
 }))
 
+app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "ALLOWALL");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "POST, GET, PUT, DELETE, OPTIONS"
+    );
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Authorization, Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+  });
+
 app.set("view engine", 'handlebars');
-
-app.get('/', (req, res) =>{
-    res.render('home');
-})
-
-app.post('/api/games', (req, res) => {
-    goalController.addGame(req.body.player1, req.body.player2, req.body.player3, req.body.player4, (err, id) => {
-        if (err) console.error(err)
-        res.send(id);    
-    })
-})
-
-app.get('/games/:id' , (req, res)=>{
-    goalController.getGame(req.params.id, (doc)=>{
-        res.render('scoreKeeper', {
-            id: doc._id
-        })
-    })
-})
-
-app.post('/games/:id', (req, res) =>{
-    goalController.getGame(req.params.id, (doc)=>{
-        res.send(doc)
-    })
-})
-
-
 app.use(express.static('public'));
+
+
+const routerGame = require('./modules/api/game/router')
+
+app.get('/', (req, res) => {
+    res.sendfile("./index")
+})
+
+app.use("/api/games", routerGame)
+
 mongoose.connect('mongodb://localhost/minihack', (err) =>{
     if(err) console.log(err);
     console.log("Database connect success!");
